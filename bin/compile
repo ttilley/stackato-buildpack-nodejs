@@ -11,6 +11,8 @@ set -x
 unset GIT_DIR
 
 # config
+DEFAULT_NODEJS_VERSION="${DEFAULT_NODEJS_VERSION:-0.8.7}"
+DEFAULT_NPM_VERSION="${DEFAULT_NPM_VERSION:-1.1.49}"
 if [ "$USER" == "stackato" ]; then
   GITHUB_REPO="${GITHUB_REPO:-ttilley/stackato-buildpack-nodejs}"
   URL_PREFIX="${URL_PREFIX:-https://github.com/${GITHUB_REPO}/raw/vendor}"
@@ -105,15 +107,15 @@ function package_download() {
 }
 
 bootstrap_node=$(mktmpdir bootstrap_node)
-package_download "nodejs" "0.4.7" $bootstrap_node
+package_download "nodejs" "${DEFAULT_NODEJS_VERSION}" $bootstrap_node
 
 # make some associative arrays
 declare -A engine_versions
 declare -A engine_defaults
 declare -A engine_requests
 
-engine_defaults["node"]="0.4.7"
-engine_defaults["npm"]="1.0.106"
+engine_defaults["node"]="${DEFAULT_NODEJS_VERSION}"
+engine_defaults["npm"]="${DEFAULT_NPM_VERSION}"
 
 engine_versions["node"]=$(manifest_versions "nodejs")
 engine_requests["node"]=$(package_engine_version "node")
