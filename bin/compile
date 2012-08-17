@@ -15,7 +15,8 @@ DEFAULT_NODEJS_VERSION="${DEFAULT_NODEJS_VERSION:-0.8.7}"
 DEFAULT_NPM_VERSION="${DEFAULT_NPM_VERSION:-1.1.49}"
 if [ "$USER" == "stackato" ]; then
   GITHUB_REPO="${GITHUB_REPO:-ttilley/stackato-buildpack-nodejs}"
-  URL_PREFIX="${URL_PREFIX:-https://github.com/${GITHUB_REPO}/raw/vendor}"
+  GITHUB_BRANCH="${GITHUB_BRANCH:-master}"
+  URL_PREFIX="${URL_PREFIX:-https://github.com/${GITHUB_REPO}/raw/${GITHUB_BRANCH}/vendor}"
 else
   S3_BUCKET="${S3_BUCKET:-heroku-buildpack-nodejs}"
   URL_PREFIX="${URL_PREFIX:-http://${S3_BUCKET}.s3.amazonaws.com}"
