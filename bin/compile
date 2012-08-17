@@ -11,7 +11,13 @@ set -x
 unset GIT_DIR
 
 # config
-S3_BUCKET="heroku-buildpack-nodejs"
+if [ "$USER" == "stackato" ]; then
+  GITHUB_REPO="${GITHUB_REPO:-ttilley/stackato-buildpack-nodejs}"
+  URL_PREFIX="${URL_PREFIX:-https://github.com/${GITHUB_REPO}/raw/vendor}"
+else
+  S3_BUCKET="${S3_BUCKET:-heroku-buildpack-nodejs}"
+  URL_PREFIX="${URL_PREFIX:-http://${S3_BUCKET}.s3.amazonaws.com}"
+fi
 
 # parse and derive params
 BUILD_DIR=$1
@@ -51,7 +57,7 @@ function run_npm() {
 }
 
 function manifest_versions() {
-  curl "http://${S3_BUCKET}.s3.amazonaws.com/manifest.${1}" -s -o - | tr -s '\n' ' '
+  curl "${URL_PREFIX}/manifest.${1}" -s -o - | tr -s '\n' ' '
 }
 
 function resolve_version() {
@@ -94,7 +100,7 @@ function package_download() {
   location="$3"
 
   mkdir -p $location
-  package="http://${S3_BUCKET}.s3.amazonaws.com/$engine-$version.tgz"
+  package="${URL_PREFIX}/$engine-$version.tgz"
   curl $package -s -o - | tar xzf - -C $location
 }
 
@@ -138,9 +144,9 @@ echo "Using npm version: ${NPM_VERSION}" | indent
 CACHE_STORE_DIR="$CACHE_DIR/node_modules/$NODE_VERSION/$NPM_VERSION"
 CACHE_TARGET_DIR="$BUILD_DIR/node_modules"
 
-# s3 packages
-NODE_PACKAGE="http://${S3_BUCKET}.s3.amazonaws.com/nodejs-${NODE_VERSION}.tgz"
-NPM_PACKAGE="http://${S3_BUCKET}.s3.amazonaws.com/npm-${NPM_VERSION}.tgz"
+# packages
+NODE_PACKAGE="${URL_PREFIX}/nodejs-${NODE_VERSION}.tgz"
+NPM_PACKAGE="${URL_PREFIX}/npm-${NPM_VERSION}.tgz"
 
 # vendor directories
 VENDORED_NODE="$(mktmpdir node)"
