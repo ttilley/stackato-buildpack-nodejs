@@ -125,15 +125,17 @@ engine_requests["npm"]=$(package_engine_version "npm")
 
 echo "-----> Resolving engine versions"
 
-# add a warning if no version of node specified
-if [ "${engine_requests["node"]}" == "" ]; then
-  echo
-  echo "WARNING: No version of Node.js specified in package.json, see:" | indent
-  echo "https://devcenter.heroku.com/articles/nodejs-versions" | indent
-  echo
-  echo "WARNING: The default version of Node.js and npm on Heroku will begin" | indent
-  echo "tracking the latest stable release starting September 1, 2012."  | indent
-  echo
+if [ "$USER" != "stackato"]; then
+  # add a warning if no version of node specified
+  if [ "${engine_requests["node"]}" == "" ]; then
+    echo
+    echo "WARNING: No version of Node.js specified in package.json, see:" | indent
+    echo "https://devcenter.heroku.com/articles/nodejs-versions" | indent
+    echo
+    echo "WARNING: The default version of Node.js and npm on Heroku will begin" | indent
+    echo "tracking the latest stable release starting September 1, 2012."  | indent
+    echo
+  fi
 fi
 
 NODE_VERSION=$(package_resolve_version "node")
